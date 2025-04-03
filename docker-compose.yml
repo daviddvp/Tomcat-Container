@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  tomcat:
+    build: .
+    container_name: tomcat_container
+    ports:
+      - "8080:8080"  # Tomcat
+      - "2222:22"    # SSH
+    volumes:
+      - ./webapps:/usr/local/tomcat/webapps  # Enlaza la carpeta local
+    restart: unless-stopped
+
+# Ejecutar docker-compose
+# podman-compose up -d
