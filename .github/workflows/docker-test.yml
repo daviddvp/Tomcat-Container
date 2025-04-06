@@ -45,15 +45,25 @@ jobs:
 
       - name: Verify container status
         run: |
-          echo "Estado del contenedor: $(docker inspect -f '{{.State.Status}}' tomcat_container)"
-          docker inspect -f '{{.State.Health.Status}}' tomcat_container  # Si tiene healthcheck
+          echo "Estado del contenedor: $(docker inspect -f '{{.State.Status}}' tomcat)"
+          docker inspect -f '{{.State.Health.Status}}' tomcat || echo "Sin healthcheck"
+
       - name: Test Tomcat HTTP connection
         run: |
+          echo "⏳ Esperando a que Tomcat esté disponible en http://localhost:8080/manager/html..."
           for i in {1..10}; do
-            curl --silent http://localhost:8080/manager/html && break
-            echo "Esperando que Tomcat esté disponible..."
+            STATUS=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8080/manager/html)
+            if [ "$STATUS" -eq 200 ]; then
+              echo "✅ Tomcat está disponible (HTTP 200)"
+              exit 0
+            fi
+            echo "Intento $i: Tomcat no está listo aún (HTTP $STATUS). Reintentando en 5s..."
             sleep 5
-            done
+          done
+
+          echo "❌ No se pudo conectar con Tomcat después de varios intentos."
+          docker compose logs
+          exit 1
 
       #- name: Test SSH availability
       #  run: |
@@ -62,3 +72,12 @@ jobs:
       - name: Cleanup
         if: always()
         run: docker compose down --volumes --remove-orphans  # Comando V2
+
+      - name: 📥 Dump logs on failure
+        if: failure()
+        run: |
+          echo "❌ Fallo detectado. Obteniendo logs de contenedores..."
+          docker compose logs > docker-logs.txt
+          echo "Mostrando últimas 100 líneas de logs:"
+          tail -n 100 docker-logs.txt
+          echo "Logs guardados en docker-logs.txt"
