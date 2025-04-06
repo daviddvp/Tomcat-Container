@@ -2,7 +2,6 @@
 
 Este proyecto proporciona un contenedor Docker listo para usar con **Apache Tomcat**, un servidor web y contenedor de servlets para aplicaciones Java.
 
----
 
 ## 📖 Descripción
 
@@ -10,7 +9,6 @@ Este contenedor está pensado para facilitar el despliegue, prueba y gestión de
 
 Ideal para entornos de desarrollo, pruebas o despliegues ligeros en producción.
 
----
 
 ## 📁 Estructura del Proyecto
 
@@ -22,14 +20,12 @@ Distribución aproximada por tecnologías usadas:
 - **Dockerfile**: 2.1%
 - **Shell**: 1.6%
 
----
 
 ## ✅ Requisitos
 
 - [Docker](https://www.docker.com/)
 - [JDK 11+](https://adoptium.net/) (solo si compilas o desarrollas localmente)
 
----
 
 ## 🚀 Uso
 
