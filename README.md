@@ -36,8 +36,7 @@ Para construir la imagen Docker desde el directorio raíz del proyecto:
 ```bash
 docker build -t tomcat-container .
 ```
-
-Desplegamos con docker compose:
+### 📦 Desplegamos con docker compose:
 
 ```bash
 docker compose up -d
