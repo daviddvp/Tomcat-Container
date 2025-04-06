@@ -1,14 +1,14 @@
 FROM tomcat:10.1.20-jdk17
 
-# Descargar manager y host-manager
+# Descargar manager y host-manager (versiones coincidentes con Tomcat 10.1.20)
 RUN curl -o /usr/local/tomcat/webapps/manager.war https://downloads.apache.org/tomcat/tomcat-10/v10.1.20/bin/extras/manager.war && \
     curl -o /usr/local/tomcat/webapps/host-manager.war https://downloads.apache.org/tomcat/tomcat-10/v10.1.20/bin/extras/host-manager.war
 
-# Instalación con versión específica y sin paquetes recomendados (corrige DL3008 y DL3015)
+# Instalar paquetes con versiones válidas para Debian Bullseye
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    openssh-server=1:9.2p1-2 \
-    nano=7.2-1 \
-    vim=2:9.0.1378-2 && \
+    openssh-server \
+    nano \
+    vim && \
     rm -rf /var/lib/apt/lists/*
 
 # Configurar SSH
