@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 version: '3.8'
+<<<<<<< HEAD
+=======
+=======
+# version: '3.8'
+>>>>>>> ecdd75b (I think now its fine)
+
+>>>>>>> 63ab055 (Test)
 services:
   tomcat:
     build: .
@@ -6,9 +14,52 @@ services:
     ports:
       - "8080:8080"  # Tomcat
       - "2222:22"    # SSH
+<<<<<<< HEAD
+<<<<<<< HEAD
     volumes:
       - ./webapps:/usr/local/tomcat/webapps  # Enlaza la carpeta local
     restart: unless-stopped
 
 # Ejecutar docker-compose
 # podman-compose up -d
+=======
+    # volumes:
+    #   - ./webapps:/usr/local/tomcat/webapps  # Enlaza la carpeta local
+=======
+    volumes:
+<<<<<<< HEAD
+      - ./webapps:/usr/local/tomcat/webapps  # Enlaza la carpeta local (descomentado)
+>>>>>>> 4e49d1f (Some edits to make this work fine)
+=======
+      - ./webapps:/usr/local/tomcat/webapps  # Enlaza la carpeta local
+>>>>>>> ecdd75b (I think now its fine)
+    env_file: 
+      - .env  # Archivo .env con las credenciales
+    restart: unless-stopped
+    # command: ["/usr/local/tomcat/init.sh"]
+
+# Para ejecutar
+# docker-compose up -d
+
+# Para detener
+# docker-compose down 
+<<<<<<< HEAD
+# Para ver logs
+# docker-compose logs -f
+# Para acceder al contenedor
+# docker exec -it tomcat_container /bin/bash
+# Para acceder al contenedor por SSH
+# ssh -p 2222 root@localhost
+# Para acceder a la consola de administración de Tomcat
+# http://localhost:8080/manager/html
+# Para acceder a la consola de administración de Tomcat (si no está habilitada)
+# http://localhost:8080/host-manager/html
+# Para habilitar la consola de administración de Tomcat, edita el archivo conf/tomcat-users.xml
+# y añade el siguiente contenido:
+# <role rolename="manager-gui"/>
+# <role rolename="manager-script"/>
+# <user username="admin" password="admin" roles="manager-gui,manager-script"/>
+>>>>>>> 63ab055 (Test)
+=======
+
+>>>>>>> ecdd75b (I think now its fine)
