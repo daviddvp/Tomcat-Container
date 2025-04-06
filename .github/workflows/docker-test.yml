@@ -48,22 +48,22 @@ jobs:
           echo "Estado del contenedor: $(docker inspect -f '{{.State.Status}}' tomcat)"
           docker inspect -f '{{.State.Health.Status}}' tomcat || echo "Sin healthcheck"
 
-      - name: Test Tomcat HTTP connection
-        run: |
-          echo "⏳ Esperando a que Tomcat esté disponible en http://localhost:8080/manager/html..."
-          for i in {1..10}; do
-            STATUS=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8080/manager/html)
-            if [ "$STATUS" -eq 200 ]; then
-              echo "✅ Tomcat está disponible (HTTP 200)"
-              exit 0
-            fi
-            echo "Intento $i: Tomcat no está listo aún (HTTP $STATUS). Reintentando en 5s..."
-            sleep 5
-          done
-
-          echo "❌ No se pudo conectar con Tomcat después de varios intentos."
-          docker compose logs
-          exit 1
+          - name: Test Tomcat HTTP connection
+          run: |
+            echo "⏳ Esperando a que Tomcat esté disponible en http://localhost:8080/manager/html..."
+            for i in {1..15}; do
+              STATUS=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8080/manager/html || echo "000")
+              echo "Intento $i: código HTTP $STATUS"
+              if [ "$STATUS" = "200" ]; then
+                echo "✅ Tomcat está disponible"
+                exit 0
+              fi
+              sleep 5
+            done
+            
+            echo "❌ No se pudo conectar con Tomcat después de varios intentos."
+            docker compose logs
+            exit 1  
 
       #- name: Test SSH availability
       #  run: |
