@@ -1,30 +1,39 @@
+# Usa una versión específica de Tomcat con JDK 17
 FROM tomcat:10.1.20-jdk17
 
-# Descargar manager y host-manager (versiones coincidentes con Tomcat 10.1.20)
-RUN curl -o /usr/local/tomcat/webapps/manager.war https://downloads.apache.org/tomcat/tomcat-10/v10.1.20/bin/extras/manager.war && \
-    curl -o /usr/local/tomcat/webapps/host-manager.war https://downloads.apache.org/tomcat/tomcat-10/v10.1.20/bin/extras/host-manager.war
+# Descarga manager y host-manager (versión compatible)
+RUN curl -o /usr/local/tomcat/webapps/manager.war \
+    https://downloads.apache.org/tomcat/tomcat-10/v10.1.20/bin/extras/manager.war && \
+    curl -o /usr/local/tomcat/webapps/host-manager.war \
+    https://downloads.apache.org/tomcat/tomcat-10/v10.1.20/bin/extras/host-manager.war
 
-# Instalar paquetes con versiones válidas para Debian Bullseye
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Instalación segura de paquetes
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     openssh-server \
     nano \
     vim && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Configurar SSH
-RUN mkdir /var/run/sshd && \
-    sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
-    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# Configuración SSH mejorada
+RUN mkdir -p /var/run/sshd && \
+    sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+    echo "root:$(openssl rand -base64 12)" | chpasswd
 
-# Copiar usuarios de Tomcat
+# Copia configuración de usuarios
 COPY conf/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
 
-# Copiar y dar permisos al script de inicialización
+# Script de inicialización
 COPY init.sh /usr/local/tomcat/init.sh
 RUN chmod +x /usr/local/tomcat/init.sh
 
-# Exponer puertos
+# Healthcheck para monitoreo
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD curl -sf http://localhost:8080/ || exit 1
+
 EXPOSE 8080 22
 
-# Comando de inicio
+# Ejecución en primer plano
 CMD ["/usr/local/tomcat/init.sh"]
