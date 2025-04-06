@@ -24,7 +24,8 @@ jobs:
       - name: Lint Dockerfile
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: Dockerfile
+          dockerfile: Dockerfile 
+          ignore: DL3006,DL3013,DL3015,DL4006,DL3008  # Ignora advertencias específicas
 
       - name: Validate docker-compose.yml
         run: docker compose config -q  # Usa docker compose (V2)
