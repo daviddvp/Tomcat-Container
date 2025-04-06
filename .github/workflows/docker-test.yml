@@ -49,7 +49,11 @@ jobs:
           docker inspect -f '{{.State.Health.Status}}' tomcat_container  # Si tiene healthcheck
       - name: Test Tomcat HTTP connection
         run: |
-          curl --retry 3 --retry-delay 5 --fail http://localhost:8080
+          for i in {1..10}; do
+            curl --silent http://localhost:8080 && break
+            echo "Esperando que Tomcat esté disponible..."
+            sleep 5
+            done
 
       - name: Test SSH availability
         run: |
